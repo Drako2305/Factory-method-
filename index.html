@@ -5,19 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GlobalDocs Solutions - Factory Method UI</title>
     <style>
-        :root { --primary: #2c3e50; --secondary: #3498db; --bg: #f4f7f6; --success: #2ecc71; --danger: #e74c3c; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
-        .header { text-align: center; margin-bottom: 20px; color: var(--primary); }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
-        select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
-        button { width: 100%; padding: 12px; background-color: var(--secondary); color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
-        button:hover { background-color: #2980b9; }
-        .console { margin-top: 20px; background: #1e1e1e; color: #a9b7c6; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 13px; min-height: 120px; overflow-y: auto; }
-        .log-success { color: var(--success); }
-        .log-error { color: var(--danger); }
-        .log-info { color: #56b6c2; }
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+        :root { --ink: #182b3a; --muted: #6c7c86; --paper: #f5f8f6; --panel: #fff; --line: #dce7e3; --teal: #087f73; --dark-teal: #075b57; --mint: #d9f1e8; --orange: #f29a62; --success: #42b883; --danger: #c64c46; }
+        * { box-sizing: border-box; }
+        body { min-height: 100vh; margin: 0; color: var(--ink); font-family: 'DM Sans', sans-serif; background: var(--paper); background-image: linear-gradient(135deg, rgba(217,241,232,.8), transparent 42%), linear-gradient(315deg, rgba(242,154,98,.13), transparent 34%); }
+        .card { width: min(680px, calc(100% - 28px)); margin: 42px auto; padding: 34px; background: rgba(255,255,255,.9); border: 1px solid rgba(220,231,227,.9); border-radius: 20px; box-shadow: 0 24px 60px rgba(24,43,58,.13); }
+        .header { margin-bottom: 28px; text-align: left; }
+        .header::before { content: 'FACTORY METHOD / BATCH WORKSPACE'; display: block; margin-bottom: 12px; color: var(--teal); font-size: 11px; font-weight: 700; letter-spacing: 1.7px; }
+        h2 { margin: 0; color: var(--ink); font: 700 clamp(30px, 6vw, 52px)/1 'Space Grotesk'; letter-spacing: -1.5px; }
+        .header p { max-width: 510px; margin: 15px 0 0; color: var(--muted); font-size: 15px; line-height: 1.55; }
+        .form-group { margin-bottom: 22px; padding: 18px; background: #f7fbf9; border: 1px solid #e4efeb; border-radius: 13px; }
+        label { display: block; margin-bottom: 9px; color: var(--ink); font-size: 13px; font-weight: 700; }
+        select { width: 100%; padding: 13px 14px; color: var(--ink); background: white; border: 1px solid var(--line); border-radius: 9px; font-size: 14px; outline: none; }
+        select:focus { border-color: var(--teal); box-shadow: 0 0 0 4px var(--mint); }
+        select[multiple] { height: 112px; padding: 4px; }
+        select[multiple] option { padding: 9px 10px; border-radius: 6px; }
+        select[multiple] option:checked { color: var(--dark-teal); background: var(--mint) linear-gradient(0deg, var(--mint), var(--mint)); font-weight: 700; }
+        small { color: var(--muted) !important; display: block; margin-top: 9px; font-size: 12px; }
+        button { width: 100%; margin-top: 2px; padding: 14px 18px; color: white; background: var(--teal); border: 1px solid var(--teal); border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: .2s ease; }
+        button:hover { background: var(--dark-teal); transform: translateY(-2px); box-shadow: 0 8px 18px rgba(8,127,115,.2); }
+        .console { min-height: 150px; margin-top: 24px; padding: 17px; overflow-y: auto; color: #dcebe7; background: #16313b; border-radius: 12px; font: 13px/1.75 Consolas, monospace; }
+        .console::before { content: 'LIVE OUTPUT  •  READY'; display: block; margin-bottom: 8px; color: #8cb8ae; font: 700 10px 'DM Sans'; letter-spacing: 1px; }
+        .log-success { color: #79d8ae; }
+        .log-error { color: #ff9b8f; }
+        .log-info { color: #8ed5e2; }
+        @media (max-width: 520px) { .card { margin: 18px auto; padding: 22px; } .form-group { padding: 14px; } h2 { font-size: 38px; } }
     </style>
 </head>
 <body>
@@ -33,6 +45,8 @@
                 <option value="Invoice">Electronic Invoice</option>
                 <option value="Contract">Legal Contract</option>
                 <option value="Report">Financial Report</option>
+                <option value="Certificate">Digital Certificate</option>
+                <option value="Tax">Tax Declaration</option>
             </select>
         </div>
 
@@ -51,10 +65,13 @@
             <label>Batch Formats:</label>
             <select id="formats" multiple style="height: 90px;">
                 <option value=".pdf" selected>.pdf</option>
+                <option value=".doc">.doc</option>
                 <option value=".docx" selected>.docx</option>
-                <option value=".xml" selected>.xml</option>
                 <option value=".md">.md</option>
+                <option value=".csv">.csv</option>
+                <option value=".txt">.txt</option>
                 <option value=".xlsx">.xlsx</option>
+                <option value=".xml">.xml</option>
             </select>
             <small style="color: #777;">Hold Ctrl (Cmd) to select multiple formats</small>
         </div>
@@ -67,32 +84,37 @@
     </div>
 
     <script>
-        function runBatchProcess() {
+        async function runBatchProcess() {
             const output = document.getElementById('consoleOutput');
             const type = document.getElementById('docType').value;
             const country = document.getElementById('country').value;
             const formats = Array.from(document.getElementById('formats').selectedOptions).map(opt => opt.value);
-            
-            output.innerHTML = `<span class="log-info">> Starting batch for ${country}...</span><br>`;
 
-            const allowedCountries = ["Colombia", "Mexico", "Argentina", "Chile"];
-            if (!allowedCountries.includes(country)) {
-                output.innerHTML += `<span class="log-error">[CRITICAL ERROR] ${country} is not supported.</span><br>`;
+            output.innerHTML = `<span class="log-info">> Enviando lote a Java para ${country}...</span><br>`;
+            if (formats.length === 0) {
+                output.innerHTML += '<span class="log-error">[ERROR] Selecciona al menos un formato.</span><br>';
                 return;
             }
 
-            formats.forEach(format => {
-                let isValid = false;
-                if (type === "Invoice" && [".pdf", ".xml", ".csv"].includes(format)) isValid = true;
-                if (type === "Contract" && [".doc", ".docx", ".pdf"].includes(format)) isValid = true;
-                if (type === "Report" && [".pdf", ".xlsx"].includes(format)) isValid = true;
-
-                if (isValid) {
-                    output.innerHTML += `<span class="log-success">[SUCCESS] ${type} processed in ${format}.</span><br>`;
-                } else {
-                    output.innerHTML += `<span class="log-error">[ERROR] Format ${format} invalid for ${type}.</span><br>`;
+            try {
+                const response = await fetch('/api/process', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ country, type, formats: formats.join(',') })
+                });
+                const data = await response.json();
+                if (data.error) {
+                    output.innerHTML += `<span class="log-error">[ERROR] ${data.error}</span><br>`;
+                    return;
                 }
-            });
+                data.results.forEach(result => {
+                    const style = result.success ? 'log-success' : 'log-error';
+                    const label = result.success ? 'SUCCESS' : 'ERROR';
+                    output.innerHTML += `<span class="${style}">[${label}] ${result.format}: ${result.message}</span><br>`;
+                });
+            } catch (error) {
+                output.innerHTML += '<span class="log-error">[ERROR] No se pudo conectar con el servidor Java.</span><br>';
+            }
         }
     </script>
 </body>
